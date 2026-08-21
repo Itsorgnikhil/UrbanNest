@@ -1,0 +1,94 @@
+{
+  "name": "UrbanNest AI Chatbot Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "3ccde469-b8fd-4b0a-a429-2ee80a25218a/chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-chat-trigger",
+      "name": "N8N Chat Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "systemMessage": "You are NestBot, the official AI assistant for UrbanNest Lifestyle Store in Indiranagar, Bengaluru. Help customers with product recommendations, store hours (10 AM - 9 PM daily), address (104 Willow Green Lane, Sector 4, Indiranagar), delivery info, and order queries."
+        }
+      },
+      "id": "node-ai-agent",
+      "name": "UrbanNest AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"output\": $json.output,\n  \"status\": \"success\",\n  \"store\": \"UrbanNest Lifestyle Store\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "id": "node-chat-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        720,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "N8N Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "UrbanNest AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UrbanNest AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
